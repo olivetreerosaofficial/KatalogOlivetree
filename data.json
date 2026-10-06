@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "nama": "sdfadsa",
+      "sku": "dsadsadsa",
+      "kategori": null,
+      "deskripsi": "dsad",
+      "jumlah": 0,
+      "harga": 0,
+      "created_at": "2026-10-06T18:51:48.612Z",
+      "images": []
+    },
+    {
+      "id": 2,
+      "nama": "asdsada",
+      "sku": "sdsadas",
+      "kategori": "dasdsada",
+      "deskripsi": null,
+      "jumlah": 0,
+      "harga": 0,
+      "created_at": "2026-10-06T18:51:57.931Z",
+      "images": [
+        {
+          "path": "/uploads/1791312717928-332440713.webp"
+        }
+      ]
+    }
+  ],
+  "nextId": 3
+}
