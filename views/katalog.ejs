@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olive Tree — Katalog Produk</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-top">
+      <a href="/" class="brand-box"><img src="/images/logo.png" alt="Olive Tree" class="logo-img" /></a>
+      <button class="hamburger-btn" id="hamburger-btn" onclick="toggleKategoriNav()" aria-label="Buka menu kategori">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <nav class="kategori-nav" id="kategori-nav">
+      <button class="kategori-btn active" data-kategori="all">ALL PRODUCTS</button>
+      <% kategoriList.forEach(kat => { %>
+        <button class="kategori-btn" data-kategori="<%= kat.toLowerCase() %>"><%= kat.toUpperCase() %></button>
+      <% }) %>
+    </nav>
+  </header>
+
+  <div class="container">
+    <% if (items.length === 0) { %>
+      <div class="empty-state">Belum ada produk.</div>
+    <% } else { %>
+      <div class="grid" id="grid-produk">
+        <% items.forEach(item => { %>
+          <div class="card clickable" data-kategori="<%= (item.kategori || '').toLowerCase() %>" onclick="bukaModal(<%= item.id %>)">
+            <% if (item.images && item.images.length > 0) { %>
+              <img src="<%= item.images[0].path %>" alt="<%= item.nama %>" />
+            <% } else { %>
+              <div class="no-image">Tidak ada gambar</div>
+            <% } %>
+            <div class="card-body">
+              <% if (item.sku) { %><div class="sku-label"><%= item.sku %></div><% } %>
+              <h3><%= item.nama %></h3>
+              <% if (item.harga && item.harga > 0) { %>
+                <div class="harga">Rp <%= item.harga.toLocaleString('id-ID') %></div>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+      <div class="empty-state" id="empty-filter" style="display:none;">Tidak ada produk di kategori ini.</div>
+    <% } %>
+  </div>
+
+  <!-- Modal detail produk -->
+  <div class="modal-overlay" id="modal-overlay" onclick="tutupModalLuar(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="tutupModal()">&times;</button>
+      <img id="modal-gambar-utama" src="" alt="" class="modal-gambar-utama" />
+      <div class="modal-thumbs" id="modal-thumbs"></div>
+      <div class="modal-info">
+        <div class="sku-label" id="modal-sku"></div>
+        <h2 id="modal-nama"></h2>
+        <div class="harga" id="modal-harga"></div>
+        <p id="modal-deskripsi" class="modal-deskripsi"></p>
+        <div class="stok" id="modal-stok"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ITEMS_DATA = <%- JSON.stringify(items) %>;
+
+    function bukaModal(id) {
+      const item = ITEMS_DATA.find((i) => i.id === id);
+      if (!item) return;
+
+      const gambarUtama = document.getElementById('modal-gambar-utama');
+      const thumbs = document.getElementById('modal-thumbs');
+      thumbs.innerHTML = '';
+
+      if (item.images && item.images.length > 0) {
+        gambarUtama.src = item.images[0].path;
+        gambarUtama.style.display = 'block';
+        if (item.images.length > 1) {
+          item.images.forEach((img, idx) => {
+            const thumb = document.createElement('img');
+            thumb.src = img.path;
+            thumb.className = 'thumb' + (idx === 0 ? ' active' : '');
+            thumb.onclick = () => {
+              gambarUtama.src = img.path;
+              document.querySelectorAll('.thumb').forEach((t) => t.classList.remove('active'));
+              thumb.classList.add('active');
+            };
+            thumbs.appendChild(thumb);
+          });
+        }
+      } else {
+        gambarUtama.style.display = 'none';
+      }
+
+      document.getElementById('modal-sku').textContent = item.sku ? 'SKU: ' + item.sku : '';
+      document.getElementById('modal-nama').textContent = item.nama;
+      document.getElementById('modal-harga').textContent =
+        item.harga && item.harga > 0 ? 'Rp ' + Number(item.harga).toLocaleString('id-ID') : '';
+      document.getElementById('modal-deskripsi').textContent = item.deskripsi || '';
+      document.getElementById('modal-stok').textContent =
+        item.jumlah > 0 ? 'Stok: ' + item.jumlah : 'Stok habis';
+
+      document.getElementById('modal-overlay').classList.add('open');
+    }
+
+    function tutupModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+    }
+
+    function tutupModalLuar(event) {
+      if (event.target.id === 'modal-overlay') tutupModal();
+    }
+
+    // Filter kategori
+    document.querySelectorAll('.kategori-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.kategori-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const kategori = btn.dataset.kategori;
+        const cards = document.querySelectorAll('#grid-produk .card');
+        let visibleCount = 0;
+        cards.forEach((card) => {
+          const cocok = kategori === 'all' || card.dataset.kategori === kategori;
+          card.style.display = cocok ? 'flex' : 'none';
+          if (cocok) visibleCount++;
+        });
+        document.getElementById('empty-filter').style.display = visibleCount === 0 ? 'block' : 'none';
+
+        // Tutup menu kategori otomatis di mobile setelah pilih
+        document.getElementById('kategori-nav').classList.remove('open');
+        document.getElementById('hamburger-btn').classList.remove('open');
+      });
+    });
+
+    function toggleKategoriNav() {
+      document.getElementById('kategori-nav').classList.toggle('open');
+      document.getElementById('hamburger-btn').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Kelola Produk</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <a class="brand" href="/">Olive Tree</a>
+    <div>
+      <a href="/">Lihat Katalog</a>
+      <form method="POST" action="/admin/logout" style="display:inline">
+        <button type="submit" class="link-btn">Logout</button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="admin-header">
+      <h1>Kelola Produk</h1>
+    </div>
+
+    <div class="form-card backup-card">
+      <h3>Backup & Restore</h3>
+      <p class="backup-desc">
+        Download semua data produk & foto jadi 1 file zip, simpan di Google Drive kamu biar aman.
+        Kalau data di server hilang (misal server di-reset), tinggal upload lagi file backup-nya di sini.
+      </p>
+      <div class="backup-actions">
+        <a class="btn" href="/admin/export">⬇ Download Backup</a>
+
+        <form method="POST" action="/admin/import" enctype="multipart/form-data"
+              onsubmit="return confirm('Import backup akan MENGGANTI semua data & foto yang ada sekarang dengan isi file backup. Lanjutkan?')">
+          <input type="file" name="backupfile" accept=".zip" required />
+          <button class="btn secondary" type="submit">⬆ Import Backup</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Tambah Produk Baru</h3>
+      <form method="POST" action="/admin/items" enctype="multipart/form-data">
+        <div class="form-row">
+          <div>
+            <label>Nama Produk</label>
+            <input type="text" name="nama" required />
+          </div>
+          <div>
+            <label>SKU</label>
+            <input type="text" name="sku" placeholder="misal: SH-001" />
+          </div>
+          <div>
+            <label>Kategori</label>
+            <input type="text" name="kategori" placeholder="misal: Shoes, Bag, Accessories" />
+          </div>
+          <div>
+            <label>Jumlah Stok</label>
+            <input type="number" name="jumlah" min="0" value="0" required />
+          </div>
+          <div>
+            <label>Harga (Rp, opsional)</label>
+            <input type="number" name="harga" min="0" value="0" />
+          </div>
+          <div>
+            <label>Foto (bisa pilih lebih dari 1)</label>
+            <input type="file" name="gambar" accept="image/*" multiple />
+          </div>
+        </div>
+        <label>Keterangan / Deskripsi</label>
+        <textarea name="deskripsi" placeholder="Deskripsi singkat produk..."></textarea>
+        <button class="btn" type="submit">Tambah Produk</button>
+      </form>
+    </div>
+
+    <% if (items.length === 0) { %>
+      <div class="empty-state">Belum ada produk.</div>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>SKU</th>
+            <th>Nama</th>
+            <th>Kategori</th>
+            <th>Stok</th>
+            <th>Harga</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(item => { %>
+            <tr>
+              <td>
+                <% if (item.images && item.images.length > 0) { %>
+                  <div class="thumb-row-mini">
+                    <% item.images.slice(0,3).forEach(img => { %>
+                      <img src="<%= img.path %>" alt="" />
+                    <% }) %>
+                  </div>
+                <% } else { %>—<% } %>
+              </td>
+              <td><%= item.sku || '-' %></td>
+              <td><%= item.nama %></td>
+              <td><%= item.kategori || '-' %></td>
+              <td><%= item.jumlah %></td>
+              <td><%= item.harga ? 'Rp ' + item.harga.toLocaleString('id-ID') : '-' %></td>
+              <td class="actions-cell">
+                <button type="button" class="link-btn" onclick="toggleEdit(<%= item.id %>)">Edit</button>
+                <form method="POST" action="/admin/items/<%= item.id %>/delete" style="display:inline" onsubmit="return confirm('Hapus produk ini?')">
+                  <button type="submit" class="link-btn" style="color:#c0392b">Hapus</button>
+                </form>
+              </td>
+            </tr>
+            <tr class="edit-row" id="edit-<%= item.id %>">
+              <td colspan="7">
+                <form method="POST" action="/admin/items/<%= item.id %>/update" enctype="multipart/form-data">
+                  <div class="form-row">
+                    <div>
+                      <label>Nama Produk</label>
+                      <input type="text" name="nama" value="<%= item.nama %>" required />
+                    </div>
+                    <div>
+                      <label>SKU</label>
+                      <input type="text" name="sku" value="<%= item.sku || '' %>" />
+                    </div>
+                    <div>
+                      <label>Kategori</label>
+                      <input type="text" name="kategori" value="<%= item.kategori || '' %>" />
+                    </div>
+                    <div>
+                      <label>Jumlah Stok</label>
+                      <input type="number" name="jumlah" min="0" value="<%= item.jumlah %>" required />
+                    </div>
+                    <div>
+                      <label>Harga (Rp)</label>
+                      <input type="number" name="harga" min="0" value="<%= item.harga %>" />
+                    </div>
+                    <div>
+                      <label>Tambah Foto Baru (opsional)</label>
+                      <input type="file" name="gambar" accept="image/*" multiple />
+                    </div>
+                  </div>
+
+                  <label>Keterangan / Deskripsi</label>
+                  <textarea name="deskripsi"><%= item.deskripsi || '' %></textarea>
+
+                  <% if (item.images && item.images.length > 0) { %>
+                    <label>Foto Saat Ini (centang untuk hapus)</label>
+                    <div class="existing-images">
+                      <% item.images.forEach(img => { %>
+                        <div class="existing-image-item">
+                          <img src="<%= img.path %>" alt="" />
+                          <label>
+                            <input type="checkbox" name="hapus_gambar" value="<%= img.path %>" /> hapus
+                          </label>
+                        </div>
+                      <% }) %>
+                    </div>
+                  <% } %>
+
+                  <button class="btn" type="submit">Simpan Perubahan</button>
+                  <button class="btn secondary" type="button" onclick="toggleEdit(<%= item.id %>)">Batal</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <script>
+    function toggleEdit(id) {
+      const row = document.getElementById('edit-' + id);
+      row.classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
