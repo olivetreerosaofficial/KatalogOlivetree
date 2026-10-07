@@ -1,9 +1,10 @@
 :root {
-  --primary: #b06a5c;
-  --dark: #2b2320;
-  --bg: #faf6f2;
+  --primary: #1a1a1a;
+  --dark: #1a1a1a;
+  --bg: #ffffff;
   --card-bg: #ffffff;
-  --border: #e8ded6;
+  --border: #ececec;
+  --muted: #8a8a8a;
   --danger: #c0392b;
 }
 
@@ -352,19 +353,23 @@ td img {
 
 .kategori-btn {
   background: none;
-  border: none;
-  color: #8a7d72;
-  font-size: 0.82rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.8rem;
   letter-spacing: 1px;
   cursor: pointer;
-  padding: 6px 2px;
-  border-bottom: 2px solid transparent;
+  padding: 7px 16px;
 }
 
-.kategori-btn.active,
 .kategori-btn:hover {
   color: var(--dark);
-  border-bottom-color: var(--primary);
+}
+
+.kategori-btn.active {
+  color: var(--dark);
+  border-color: var(--dark);
+  font-weight: 600;
 }
 
 @media (max-width: 640px) {
