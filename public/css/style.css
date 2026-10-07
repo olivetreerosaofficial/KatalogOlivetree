@@ -1,10 +1,25 @@
 :root {
-  --primary: #1a1a1a;
-  --dark: #1a1a1a;
-  --bg: #ffffff;
+  /* Palet olive, basis: #414626 */
+  --olive-900: #1F2211;
+  --olive-800: #2B2F19;
+  --olive-700: #414626;
+  --olive-500: #6B7240;
+  --olive-300: #A9AF84;
+  --olive-200: #D5D9C0;
+  --olive-100: #E9EBDD;
+  --olive-50:  #F5F6EE;
+
+  --primary: var(--olive-700);
+  --primary-hover: var(--olive-800);
+  --dark: var(--olive-900);
+  --bg: var(--olive-50);
   --card-bg: #ffffff;
-  --border: #ececec;
-  --muted: #8a8a8a;
+  --border: var(--olive-200);
+  --muted: var(--olive-500);
+  --text-soft: #5A6040;      /* teks sekunder: deskripsi, stok */
+  --text-faint: #858B68;     /* teks tersier: SKU, placeholder, tombol close */
+  --surface: var(--olive-100); /* background gambar kosong, header tabel */
+  --surface-soft: #F0F2E6;   /* background edit-row, backup-card */
   --danger: #c0392b;
 }
 
@@ -51,7 +66,7 @@ body {
 }
 
 .hero p {
-  color: #6b6058;
+  color: var(--text-soft);
   margin-bottom: 28px;
 }
 
@@ -66,6 +81,11 @@ body {
   border: none;
   cursor: pointer;
   font-size: 1rem;
+  transition: background 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--primary-hover);
 }
 
 .btn.secondary {
@@ -74,8 +94,16 @@ body {
   border: 1px solid var(--primary);
 }
 
+.btn.secondary:hover {
+  background: var(--olive-100);
+}
+
 .btn.danger {
   background: var(--danger);
+}
+
+.btn.danger:hover {
+  background: #a93226;
 }
 
 .container {
@@ -128,7 +156,7 @@ body {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  background: #f0eae4;
+  background: var(--surface);
 }
 
 .card .no-image {
@@ -137,8 +165,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #a99b8f;
-  background: #f0eae4;
+  color: var(--text-faint);
+  background: var(--surface);
   font-size: 0.9rem;
 }
 
@@ -159,13 +187,13 @@ body {
 
 .card-body .stok {
   font-size: 0.85rem;
-  color: #6b6058;
+  color: var(--text-soft);
 }
 
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  color: #a99b8f;
+  color: var(--text-faint);
 }
 
 /* ---- Admin ---- */
@@ -192,6 +220,16 @@ input[type="file"] {
   border-radius: 8px;
   margin-bottom: 14px;
   font-size: 0.95rem;
+  background: #fff;
+  color: var(--dark);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--olive-500);
+  box-shadow: 0 0 0 3px rgba(107, 114, 64, 0.2);
 }
 
 label {
@@ -245,7 +283,8 @@ th, td {
 }
 
 th {
-  background: #f4ede7;
+  background: var(--surface);
+  color: var(--olive-800);
 }
 
 td img {
@@ -262,7 +301,7 @@ td img {
 
 .edit-row {
   display: none;
-  background: #fbf7f3;
+  background: var(--surface-soft);
 }
 
 .edit-row.open {
@@ -277,6 +316,11 @@ td img {
   font-weight: 600;
   padding: 0;
   font-size: 0.9rem;
+}
+
+.link-btn:hover {
+  color: var(--olive-500);
+  text-decoration: underline;
 }
 
 /* ---- Katalog: header dengan logo + nav kategori ---- */
@@ -316,7 +360,7 @@ td img {
   display: block;
   width: 20px;
   height: 2px;
-  background: var(--dark);
+  background: var(--primary);
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
@@ -360,15 +404,18 @@ td img {
   letter-spacing: 1px;
   cursor: pointer;
   padding: 7px 16px;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .kategori-btn:hover {
-  color: var(--dark);
+  color: var(--primary);
+  background: var(--olive-100);
 }
 
 .kategori-btn.active {
-  color: var(--dark);
-  border-color: var(--dark);
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
   font-weight: 600;
 }
 
@@ -393,7 +440,14 @@ td img {
   .kategori-btn {
     padding: 12px 4px;
     border-bottom: 1px solid var(--border) !important;
+    border-radius: 0;
     text-align: left;
+  }
+
+  .kategori-btn.active {
+    background: none;
+    color: var(--primary);
+    border-color: transparent;
   }
 }
 
@@ -405,12 +459,12 @@ td img {
 
 .card.clickable:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 20px rgba(65, 70, 38, 0.15);
 }
 
 .sku-label {
   font-size: 0.72rem;
-  color: #a99b8f;
+  color: var(--text-faint);
   letter-spacing: 0.5px;
   margin-bottom: 4px;
 }
@@ -420,7 +474,7 @@ td img {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(20, 15, 12, 0.6);
+  background: rgba(31, 34, 17, 0.65);
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -450,8 +504,12 @@ td img {
   border: none;
   font-size: 1.6rem;
   cursor: pointer;
-  color: #a99b8f;
+  color: var(--text-faint);
   line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--primary);
 }
 
 .modal-gambar-utama {
@@ -459,7 +517,7 @@ td img {
   max-height: 340px;
   object-fit: contain;
   border-radius: 10px;
-  background: #f4ede7;
+  background: var(--surface);
   display: block;
   margin: 0 auto;
 }
@@ -498,7 +556,7 @@ td img {
 }
 
 .modal-deskripsi {
-  color: #6b6058;
+  color: var(--text-soft);
   font-size: 0.92rem;
   margin: 10px 0;
   line-height: 1.5;
@@ -536,6 +594,8 @@ textarea {
   font-family: inherit;
   resize: vertical;
   min-height: 70px;
+  background: #fff;
+  color: var(--dark);
 }
 
 select {
@@ -545,6 +605,8 @@ select {
   border-radius: 8px;
   margin-bottom: 14px;
   font-size: 0.95rem;
+  background: #fff;
+  color: var(--dark);
 }
 
 .thumb-row-mini {
@@ -560,11 +622,11 @@ select {
 }
 
 .backup-card {
-  background: #fbf7f3;
+  background: var(--surface-soft);
 }
 
 .backup-desc {
-  color: #6b6058;
+  color: var(--text-soft);
   font-size: 0.88rem;
   margin: 6px 0 16px;
   line-height: 1.5;
